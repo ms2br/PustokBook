@@ -1,0 +1,59 @@
+﻿@model List<AdminCategoryListItemVM>
+
+@section styles {
+    <!-- Custom fonts for this template-->
+    <link href="~/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/admin/css/sb-admin-2.min.css" rel="stylesheet">
+}
+
+<a asp-action="Create" class="btn btn-success m-3">Create</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">CategoryId</th>
+            <th colspan="2" class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr class="@(item.IsDeleted ? "bg-danger":"")">
+                    <td scope="col">@item.Id</td>
+                    <td scope="col">@item.Name</td>
+                    <td scope="col">@item.CategoryId</td>
+                    <td class="text-center" scope="col">
+                        <a class="btn btn-outline-info" asp-action="Update" asp-route-id="@item.Id">Update</a>
+                    </td>
+                    <td class="text-center" scope="col">
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td scope="col"></td>
+                <td scope="col"></td>
+                <td scope="col"></td>
+                <td scope="col"></td>
+                <td scope="col" colspan="2"></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+@section scripts {
+    <!-- Custom scripts for all pages-->
+    <script src="~/admin/js/sb-admin-2.min.js"></script>
+}
