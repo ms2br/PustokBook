@@ -13,7 +13,7 @@ namespace PustokBook.Areas.Admin.ViewModels.Authors
         [MinLength(3), MaxLength(25)]
         public string LastName { get; set; }
 
-        public List<AuthorBook>? AuthorBook { get; set; }
+        public List<AuthorProduct>? AuthorBook { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 }

@@ -32,10 +32,10 @@ namespace PustokBook.Models
         public ushort Quantity { get; set; }
         public int CategoryId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public ICollection<AuthorBook>? AuthorBook { get; set; }
+        public ICollection<AuthorProduct>? AuthorBook { get; set; }
         public ICollection<ProductImage>? ProductImages { get; set; }
         public Category? Category { get; set; }
         public bool IsDeleted { get; set; } = false;

@@ -14,7 +14,7 @@ namespace PustokBook.Models
 
         public string FullName { get { return this.FirstName + " " + this.LastName; } }
 
-        public List<AuthorBook>? AuthorBook { get; set; }
+        public List<AuthorProduct>? AuthorBook { get; set; }
 
         public bool IsDeleted { get; set; } = false;
     }

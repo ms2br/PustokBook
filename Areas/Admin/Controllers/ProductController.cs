@@ -5,6 +5,7 @@ using PustokBook.Areas.Admin.Helpers;
 using PustokBook.Areas.Admin.ViewModels.Products;
 using PustokBook.Contexts;
 using PustokBook.Models;
+using SIO = System.IO;
 
 namespace PustokBook.Areas.Admin.Controllers
 {
@@ -41,7 +42,7 @@ namespace PustokBook.Areas.Admin.Controllers
             return View(products);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
 
@@ -52,6 +53,10 @@ namespace PustokBook.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateAdminProductVM data)
         {
+            ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
+
+            ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
+
             if (data.ExTax > data.CostPrice)
             {
                 ModelState.AddModelError("CostPrice", "Ex Tax cannot be greater than the cost price");
@@ -81,14 +86,14 @@ namespace PustokBook.Areas.Admin.Controllers
                 {
                     if (img.IsValidSize(20000))
                     {
-                        ModelState.AddModelError("", "Wrong file type (" + img.FileName + ")");
+                        ModelState.AddModelError("ImagesUrl", "Wrong file type (" + img.FileName + ")");
 
                     }
 
                     if (img.IsCorrectType())
                     {
 
-                        ModelState.AddModelError("", "Files length must be less than kb (" + img.FileName + ")");
+                        ModelState.AddModelError("ImagesUrl", "Files length must be less than kb (" + img.FileName + ")");
                     }
                 }
             }
@@ -102,29 +107,26 @@ namespace PustokBook.Areas.Admin.Controllers
                 return View(data);
             }
 
-            if (!await _db.Categorys.AnyAsync(x => x.CategoryId == data.CategoryId))
+            if (!await _db.Categorys.AnyAsync(x => x.Id == data.CategoryId))
             {
-                ModelState.AddModelError("CategoryId", "Category doesnt exist");
-                ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
+                return View(data);
+            }
 
+            if (data.AuthorIds == null)
+            {
+                ModelState.AddModelError("AuthorIds", "Category doesnt exist");
+                ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
                 ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
                 return View(data);
             }
 
-            if (await _db.Categorys.Where(c => data.AuthorIds.Contains(c.Id)).Select(c => c.Id).CountAsync() != data.AuthorIds.Count())
+            if (await _db.Authors.Where(x => data.AuthorIds.Contains(x.Id)).Select(c => c.Id).CountAsync() != data.AuthorIds.Count())
             {
-                ModelState.AddModelError("CategoryId", "Category doesnt exist");
-                ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
-
-                ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
                 return View(data);
             }
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
-
-                ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
                 return View(data);
             }
 
@@ -145,7 +147,7 @@ namespace PustokBook.Areas.Admin.Controllers
                 {
                     ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result
                 }).ToList(),
-                AuthorBook = data.AuthorIds.Select(id => new AuthorBook
+                AuthorBook = data.AuthorIds.Select(id => new AuthorProduct
                 {
                     AuthorId = id
                 }).ToList()
@@ -156,5 +158,161 @@ namespace PustokBook.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            string rootParh = PathConstants.RootPath;
+
+            if (id < 1 || id == null)
+                return BadRequest();
+
+            Product product = await _db.Products.FindAsync(id);
+
+            if (product == null)
+                return NotFound();
+
+            SIO.File.Delete(rootParh + "\\" + product.ActiveImage);
+            product.IsDeleted = true;
+
+            IEnumerable<ProductImage> productImages = await _db.ProductImages.Where(x => x.ProductId == id).Select(x => x).ToListAsync();
+
+            if (productImages == null || productImages.Count() == 0)
+            {
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var item in productImages)
+            {
+                SIO.File.Delete(rootParh + "\\" + item.ImageUrl);
+                _db.ProductImages.Remove(item);
+            }
+
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        public async Task<IActionResult> Update(int? id)
+        {
+            ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
+            ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
+
+            if (id < 1 || id == null)
+                return BadRequest();
+
+            Product product = await _db.Products.FindAsync(id);
+
+            UpdateProductAdminVM updateAll = new UpdateProductAdminVM
+            {
+                Title = product.Title,
+                CategoryId = product.CategoryId,
+                CostPrice = product.CostPrice,
+                Description = product.Description,
+                Discount = product.Discount,
+                ExTax = product.ExTax,
+                ProductCode = product.ProductCode,
+                Quantity = product.Quantity,
+                SellPrice = product.SellPrice
+            };
+
+            return View(updateAll);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(int? id, UpdateProductAdminVM updateData)
+        {
+            if (id < 1 || id == null)
+                return BadRequest();
+
+
+            if (updateData.CategoryId < 1 || updateData.CategoryId == null)
+                return BadRequest();
+
+            if (!await _db.Categorys.AnyAsync(x => x.Id == updateData.CategoryId) == null)
+                return NotFound();
+
+            if (await _db.Authors.Where(x => updateData.AuthorIds.Contains(x.Id)).Select(c => c.Id).CountAsync() != updateData.AuthorIds.Count())
+                return BadRequest();
+
+
+            if (updateData.ExTax > updateData.CostPrice)
+            {
+                ModelState.AddModelError("CostPrice", "Ex Tax cannot be greater than the cost price");
+            }
+
+            if (updateData.CostPrice > updateData.SellPrice)
+            {
+                ModelState.AddModelError("SellPrice", "Cost Price cannot be greater than the sales price");
+            }
+
+            if (updateData.ActiveImage != null)
+            {
+                if (updateData.Products.ActiveImage.IsValidSize(20000))
+                {
+                    ModelState.AddModelError("ImageFile", "Files length must be less than kb");
+                }
+
+                if (updateData.Products.ActiveImage.IsCorrectType())
+                {
+                    ModelState.AddModelError("ImageFile", "Wrong file type");
+                }
+            }
+
+            if (updateData.ImagesUrl != null)
+            {
+                foreach (IFormFile img in updateData.Products.ImagesUrl)
+                {
+                    if (img.IsValidSize(20000))
+                    {
+                        ModelState.AddModelError("ImagesUrl", "Wrong file type (" + img.FileName + ")");
+
+                    }
+
+                    if (img.IsCorrectType())
+                    {
+
+                        ModelState.AddModelError("ImagesUrl", "Files length must be less than kb (" + img.FileName + ")");
+                    }
+                }
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
+                ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
+                return View(updateData);
+            }
+
+            Product product = await _db.Products.FindAsync(id);
+
+            ICollection<ProductImage> productImages = await _db.ProductImages.Where(x => x.ProductId == id).ToListAsync();
+
+            if (product == null || productImages.Count == 0 || productImages == null)
+                return NotFound();
+
+            product.UpdatedAt = updateData.UpdatedAt;
+            product.SellPrice = updateData.SellPrice;
+            product.CostPrice = updateData.CostPrice;
+            product.ProductCode = updateData.ProductCode;
+            product.Title = updateData.Title;
+            product.Description = updateData.Description;
+            product.Quantity = updateData.Quantity;
+            product.ExTax = updateData.ExTax;
+            product.Discount = updateData.Discount;
+            product.CategoryId = updateData.CategoryId;
+            product.AuthorBook = updateData.AuthorIds.Select(id => new AuthorProduct
+            {
+                AuthorId = id
+            }).ToList();
+            product.ActiveImage = updateData.ActiveImage.SaveAsync(PathConstants.ProductImage).Result;
+            product.ProductImages = updateData.ImagesUrl.Select(x => new ProductImage
+            {
+                ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result
+            }).ToList();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

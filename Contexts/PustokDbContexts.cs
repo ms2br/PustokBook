@@ -10,7 +10,7 @@ namespace PustokBook.Contexts
         public DbSet<Slider> Sliders { get; set; }
         public DbSet<Category> Categorys { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
-        public DbSet<AuthorBook> AuthorBooks { get; set; }
+        public DbSet<AuthorProduct> AuthorBooks { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Product> Products { get; set; }
     }

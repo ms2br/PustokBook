@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PustokBook.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace PustokBook.Areas.Admin.ViewModels.Products
 {
@@ -32,6 +33,7 @@ namespace PustokBook.Areas.Admin.ViewModels.Products
         public int CategoryId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public Category? Category { get; set; }
 
         public IEnumerable<int> AuthorIds { get; set; }
     }
