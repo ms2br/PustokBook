@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PustokBook.Areas.Admin.ViewModels.Categorys;
+using PustokBook.Areas.Admin.ViewModels.CategoryVM;
 using PustokBook.Contexts;
 using PustokBook.Models;
 

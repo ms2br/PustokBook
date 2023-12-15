@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
-using PustokBook.Areas.Admin.ViewModels.Slider;
+using PustokBook.Areas.Admin.ViewModels.SliderVM;
 using PustokBook.Contexts;
 using PustokBook.Models;
 

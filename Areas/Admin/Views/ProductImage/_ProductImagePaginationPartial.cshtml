@@ -1,0 +1,32 @@
+﻿@model PaginatonVM<IEnumerable<AdminProductImageListItemVM>>
+
+@foreach(var item in Model.Item)
+{
+    <tr>
+        <td scope="col">@item.Id</td>
+        <td scope="col">@item.ProductName</td>
+        <td scope="col"><img width="60px" src="~/@item.ImageUrls" /></td>
+        <td scope="col">
+            <a class="btn btn-outline-info" asp-action="Update" asp-route-id="@item.Id">Update</a>
+        </td>
+        <td scope="col">
+            <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </td>
+    </tr>
+}
+
+<nav aria-label="...">
+    <ul class="pagination" id="area">
+        <li class="page-item @(Model.HasPrev ? " " : "disabled")">
+            <a class="page-link" asp-action="ProductImagePagination" asp-route-page="(@Model.LastPage - 1)" asp-route-count="3">Previous</a>
+        </li>
+        @for(int i = 1; i <= Model.NextPage; i++)
+        {
+
+            <li class="page-item @(i == Model.LastPage ? "active" : "")"><a class="page-link" asp-action="ProductImagePagination" asp-route-page="(@Model.LastPage - 1)" asp-route-count="3">@i</a></li>
+        }
+        <li class="page-item">
+            <a class="page-link" asp-action="ProductImagePagination" asp-route-page="(@Model.LastPage + 1)" asp-route-count="3">Next</a>
+        </li>
+    </ul>
+</nav>

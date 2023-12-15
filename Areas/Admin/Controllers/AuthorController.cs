@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PustokBook.Areas.Admin.ViewModels.Authors;
+using PustokBook.Areas.Admin.ViewModels.AuthorVM;
 using PustokBook.Contexts;
 using PustokBook.Models;
 

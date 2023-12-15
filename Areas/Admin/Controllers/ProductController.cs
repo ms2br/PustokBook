@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
-using PustokBook.Areas.Admin.ViewModels.Products;
+using PustokBook.Areas.Admin.ViewModels.ProductVM;
 using PustokBook.Contexts;
 using PustokBook.Models;
 using SIO = System.IO;
@@ -74,7 +74,7 @@ namespace PustokBook.Areas.Admin.Controllers
                     ModelState.AddModelError("ImageFile", "Files length must be less than kb");
                 }
 
-                if (data.ActiveImage.IsCorrectType())
+                if (!data.ActiveImage.IsCorrectType())
                 {
                     ModelState.AddModelError("ImageFile", "Wrong file type");
                 }
@@ -90,7 +90,7 @@ namespace PustokBook.Areas.Admin.Controllers
 
                     }
 
-                    if (img.IsCorrectType())
+                    if (!img.IsCorrectType())
                     {
 
                         ModelState.AddModelError("ImagesUrl", "Files length must be less than kb (" + img.FileName + ")");
@@ -248,12 +248,12 @@ namespace PustokBook.Areas.Admin.Controllers
 
             if (updateData.ActiveImage != null)
             {
-                if (updateData.Products.ActiveImage.IsValidSize(20000))
+                if (updateData.ActiveImage.IsValidSize(20000))
                 {
                     ModelState.AddModelError("ImageFile", "Files length must be less than kb");
                 }
 
-                if (updateData.Products.ActiveImage.IsCorrectType())
+                if (updateData.ActiveImage.IsCorrectType())
                 {
                     ModelState.AddModelError("ImageFile", "Wrong file type");
                 }
@@ -261,7 +261,7 @@ namespace PustokBook.Areas.Admin.Controllers
 
             if (updateData.ImagesUrl != null)
             {
-                foreach (IFormFile img in updateData.Products.ImagesUrl)
+                foreach (IFormFile img in updateData.ImagesUrl)
                 {
                     if (img.IsValidSize(20000))
                     {
@@ -311,7 +311,6 @@ namespace PustokBook.Areas.Admin.Controllers
             {
                 ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result
             }).ToList();
-
             return RedirectToAction(nameof(Index));
         }
     }
