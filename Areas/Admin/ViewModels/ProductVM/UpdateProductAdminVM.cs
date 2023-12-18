@@ -35,5 +35,8 @@ namespace PustokBook.Areas.Admin.ViewModels.ProductVM
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public IEnumerable<int>? AuthorIds { get; set; }
+
+        public IEnumerable<ProductImageAdminVM>? Images { get; set; }
+        public string CoverImgUrl { get; set; }
     }
 }

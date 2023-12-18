@@ -5,29 +5,41 @@ namespace PustokBook.Areas.Admin.ViewModels.CommonVM
     public class PaginatonVM<T> where T : IEnumerable
     {
         public int TotalCount { get; }
-        public int LastPage { get; } // Oludugum Yer
-        public int NextPage { get; } // Novbeti Seyfe
-        public bool HasPrev { get; } = false;
-        public bool NextPrev { get; } = true;
-        public T Item { get; }
+        public int LastPage { get; }
+        public int CurrentPage { get; }
+        public bool HasPrev { get; }
+        public bool HasNext { get; }
+        public T Items { get; }
 
-        public PaginatonVM(int totalCount, int lastPage, int nextPage, T item)
+        public PaginatonVM(int totalCount, int currentPage, int lastPage, T items)
         {
-            TotalCount = totalCount;
-            Item = item;
-            LastPage = lastPage;
-            NextPage = nextPage;
-            Item = item;
-            if (nextPage >= lastPage)
+            if (currentPage <= 0)
             {
-                if (nextPage == lastPage)
-                {
-                    NextPrev = false;
-                    HasPrev = true;
-                }
-                if (nextPage == 1)
+                throw new ArgumentException();
+            }
+
+            TotalCount = totalCount;
+            CurrentPage = currentPage;
+            LastPage = lastPage;
+            Items = items;
+
+            if (currentPage <= lastPage)
+            {
+                if (currentPage == 1)
                 {
                     HasPrev = false;
+                }
+                else
+                {
+                    HasPrev = true;
+                }
+                if (currentPage == lastPage)
+                {
+                    HasNext = false;
+                }
+                else
+                {
+                    HasNext = true;
                 }
             }
         }

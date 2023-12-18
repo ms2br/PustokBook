@@ -9,6 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>@ViewBag.Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @await RenderSectionAsync("styles", false)
 </head>
 
@@ -343,15 +344,13 @@
             </div>
         </div>
     </div>
-
-
     <!-- Bootstrap core JavaScript-->
     <script src="~/admin/vendor/jquery/jquery.min.js"></script>
     <script src="~/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
     <script src="~/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
-    @await RenderSectionAsync("scripts",false)
+    @await RenderSectionAsync("scripts", false)
 </body>
 
 </html>

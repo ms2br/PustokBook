@@ -46,11 +46,24 @@
         <span asp-validation-for="Quantity" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <input type="hidden" asp-for="CoverImgUrl"/>
+        <img src="~/@Model.CoverImgUrl" width="120px" />
         <label asp-for="ActiveImage" class="form-label"></label>
         <input class="form-control" accept="image/*" asp-for="ActiveImage">
         <span asp-validation-for="ActiveImage" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <div class="row">            
+            @foreach (var img in Model.Images)
+            {
+                <div class="col-1 position-relative">
+                    <a asp-action="DeleteImageCSharp" asp-route-id="@img.Id" class="position-absolute position-absolute top-0 text-danger del-img">
+                        <i class="fas fa-trash-alt"></i>
+                  </a>
+                  <img class="w-100" src="~/@img.ImageUrl"/>
+              </div>  
+            }
+        </div>
         <label asp-for="ImagesUrl" class="form-label"></label>
         <input class="form-control" accept="image/*" asp-for="ImagesUrl">
         <div class="text-danger" asp-validation-summary=ModelOnly></div>
@@ -75,6 +88,51 @@
 </form>
 
 @section scripts {
-    <!-- Custom scripts for all pages-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(".del-img").click(function(ev){
+            ev.preventDefault();
+            var url = $(this).attr("href");
+            // alert($(this).attr("data-id"));
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(url)
+                    .then(data => {
+                        console.log(data)
+                        if (data.status == 200) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "Something went wrong!",
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Something went wrong!",
+                        });
+                    })
+                }
+            });
+        })
+
+    </script>
     <script src="~/admin/js/sb-admin-2.min.js"></script>
 }

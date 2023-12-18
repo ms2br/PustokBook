@@ -53,9 +53,6 @@ namespace PustokBook.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateAdminProductVM data)
         {
-            ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
-
-            ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
 
             if (data.ExTax > data.CostPrice)
             {
@@ -127,6 +124,8 @@ namespace PustokBook.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
+                ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
                 return View(data);
             }
 
@@ -157,7 +156,6 @@ namespace PustokBook.Areas.Admin.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -192,30 +190,39 @@ namespace PustokBook.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
         public async Task<IActionResult> Update(int? id)
         {
-            ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
-            ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
-
             if (id < 1 || id == null)
                 return BadRequest();
 
-            Product product = await _db.Products.FindAsync(id);
+            //Product product = await _db.Products.FindAsync(id);
+            Product product = await _db.Products.Include(x => x.ProductImages).Include(x => x.AuthorBook).ThenInclude(x => x.Author).SingleOrDefaultAsync(x => x.Id == id);
+
+            if (product == null)
+                return NotFound();
+
+            ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
+            ViewBag.Authors = new SelectList(_db.Authors.Where(x => x.IsDeleted == false), "Id", "FullName");
 
             UpdateProductAdminVM updateAll = new UpdateProductAdminVM
             {
                 Title = product.Title,
                 CategoryId = product.CategoryId,
+                AuthorIds = product.AuthorBook.Select(x => x.AuthorId),
                 CostPrice = product.CostPrice,
                 Description = product.Description,
                 Discount = product.Discount,
                 ExTax = product.ExTax,
                 ProductCode = product.ProductCode,
                 Quantity = product.Quantity,
-                SellPrice = product.SellPrice
+                SellPrice = product.SellPrice,
+                CoverImgUrl = product.ActiveImage,
+                Images = product.ProductImages?.Select(x => new ProductImageAdminVM
+                {
+                    Id = x.Id,
+                    ImageUrl = x.ImageUrl
+                })
             };
-
             return View(updateAll);
         }
 
@@ -225,12 +232,14 @@ namespace PustokBook.Areas.Admin.Controllers
             if (id < 1 || id == null)
                 return BadRequest();
 
-
             if (updateData.CategoryId < 1 || updateData.CategoryId == null)
                 return BadRequest();
 
             if (!await _db.Categorys.AnyAsync(x => x.Id == updateData.CategoryId) == null)
                 return NotFound();
+
+            if (updateData.AuthorIds == null)
+                return BadRequest();
 
             if (await _db.Authors.Where(x => updateData.AuthorIds.Contains(x.Id)).Select(c => c.Id).CountAsync() != updateData.AuthorIds.Count())
                 return BadRequest();
@@ -312,6 +321,28 @@ namespace PustokBook.Areas.Admin.Controllers
                 ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result
             }).ToList();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> DeleteImageCSharp(int? id)
+        {
+            if (id < 1 || id == null) return BadRequest();
+            ProductImage item = await _db.ProductImages.FindAsync(id);
+            if (item == null) return NotFound();
+            _db.Remove(item);
+            SIO.File.Delete(Path.Combine(PathConstants.RootPath, item.ImageUrl));
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Update), new { Id = item.ProductId });
+        }
+
+        public async Task<IActionResult> DeleteImage(int? id)
+        {
+            if (id < 1 || id == null) return BadRequest();
+            ProductImage item = await _db.ProductImages.FindAsync(id);
+            if (item == null) return NotFound();
+            _db.Remove(item);
+            SIO.File.Delete(Path.Combine(PathConstants.RootPath, item.ImageUrl));
+            await _db.SaveChangesAsync();
+            return Ok();
         }
     }
 }

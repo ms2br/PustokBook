@@ -35,7 +35,7 @@ namespace PustokBook.Areas.Admin.Controllers
             }).Skip((page - 1) * count)
             .Take(count);
 
-            int totalCount = await item.CountAsync();
+            int totalCount = await _db.ProductImages.CountAsync();
 
             PaginatonVM<IEnumerable<AdminProductImageListItemVM>> data = new(totalCount, page, (int)Math.Ceiling((decimal)totalCount / count), item);
             return View(data);
@@ -186,10 +186,11 @@ namespace PustokBook.Areas.Admin.Controllers
             }).Skip((page - 1) * count)
             .Take(count);
 
-            int totalCount = await item.CountAsync();
-
+            int totalCount = await _db.ProductImages.CountAsync();
             PaginatonVM<IEnumerable<AdminProductImageListItemVM>> data = new(totalCount, page, (int)Math.Ceiling((decimal)totalCount / count), item);
             return PartialView("_ProductImagePaginationPartial", data);
         }
+
+
     }
 }
