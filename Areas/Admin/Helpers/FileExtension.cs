@@ -19,8 +19,20 @@
             {
                 await file.CopyToAsync(fs);
             }
-
             return fileName;
+        }
+
+        public static async Task UpdateAsync(this IFormFile file, string lastImageUrl)
+        {
+            //if (!File.Exists(lastImageUrl))
+            //{
+            //    throw new FileNotFoundException();
+            //}
+            File.Delete(lastImageUrl);
+            using (FileStream fs = File.Create(lastImageUrl))
+            {
+                await file.CopyToAsync(fs);
+            }
         }
     }
 }

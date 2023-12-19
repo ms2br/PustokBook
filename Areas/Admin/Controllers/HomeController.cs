@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
 using PustokBook.Areas.Admin.ViewModels.SliderVM;
@@ -8,6 +9,7 @@ using PustokBook.Models;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class HomeController : Controller
     {
         PustokDbContexts _dbContexts { get; }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
@@ -10,6 +11,7 @@ using SIO = System.IO;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class ProductImageController : Controller
     {
 
@@ -176,7 +178,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
 
-        public async Task<IActionResult> ProductImagePagination(int page = 1, int count = 8)
+        public async Task<IActionResult> ProductImagePagination(int page = 1, int count = 3)
         {
             IQueryable<AdminProductImageListItemVM> item = _db.ProductImages.Select(x => new AdminProductImageListItemVM
             {
@@ -190,7 +192,5 @@ namespace PustokBook.Areas.Admin.Controllers
             PaginatonVM<IEnumerable<AdminProductImageListItemVM>> data = new(totalCount, page, (int)Math.Ceiling((decimal)totalCount / count), item);
             return PartialView("_ProductImagePaginationPartial", data);
         }
-
-
     }
 }

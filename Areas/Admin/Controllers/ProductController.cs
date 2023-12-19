@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
@@ -10,6 +11,7 @@ using SIO = System.IO;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class ProductController : Controller
     {
         IWebHostEnvironment _env { get; }
@@ -26,7 +28,7 @@ namespace PustokBook.Areas.Admin.Controllers
             List<AdminProductListItemVM> products = await _db.Products.Select(x => new AdminProductListItemVM
             {
                 Id = x.Id,
-                Authors = x.AuthorBook.Select(x => x.Author),
+                Authors = x.AuthorBooks.Select(x => x.Author),
                 Category = x.Category,
                 CostPrice = x.CostPrice,
                 Description = x.Description,
@@ -146,7 +148,7 @@ namespace PustokBook.Areas.Admin.Controllers
                 {
                     ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result
                 }).ToList(),
-                AuthorBook = data.AuthorIds.Select(id => new AuthorProduct
+                AuthorBooks = data.AuthorIds.Select(id => new AuthorProduct
                 {
                     AuthorId = id
                 }).ToList()
@@ -196,7 +198,7 @@ namespace PustokBook.Areas.Admin.Controllers
                 return BadRequest();
 
             //Product product = await _db.Products.FindAsync(id);
-            Product product = await _db.Products.Include(x => x.ProductImages).Include(x => x.AuthorBook).ThenInclude(x => x.Author).SingleOrDefaultAsync(x => x.Id == id);
+            Product product = await _db.Products.Include(x => x.ProductImages).Include(x => x.AuthorBooks).ThenInclude(x => x.Author).SingleOrDefaultAsync(x => x.Id == id);
 
             if (product == null)
                 return NotFound();
@@ -208,7 +210,7 @@ namespace PustokBook.Areas.Admin.Controllers
             {
                 Title = product.Title,
                 CategoryId = product.CategoryId,
-                AuthorIds = product.AuthorBook.Select(x => x.AuthorId),
+                AuthorIds = product.AuthorBooks.Select(x => x.AuthorId),
                 CostPrice = product.CostPrice,
                 Description = product.Description,
                 Discount = product.Discount,
@@ -238,12 +240,12 @@ namespace PustokBook.Areas.Admin.Controllers
             if (!await _db.Categorys.AnyAsync(x => x.Id == updateData.CategoryId) == null)
                 return NotFound();
 
+
             if (updateData.AuthorIds == null)
                 return BadRequest();
 
             if (await _db.Authors.Where(x => updateData.AuthorIds.Contains(x.Id)).Select(c => c.Id).CountAsync() != updateData.AuthorIds.Count())
                 return BadRequest();
-
 
             if (updateData.ExTax > updateData.CostPrice)
             {
@@ -262,7 +264,7 @@ namespace PustokBook.Areas.Admin.Controllers
                     ModelState.AddModelError("ImageFile", "Files length must be less than kb");
                 }
 
-                if (updateData.ActiveImage.IsCorrectType())
+                if (!updateData.ActiveImage.IsCorrectType())
                 {
                     ModelState.AddModelError("ImageFile", "Wrong file type");
                 }
@@ -286,7 +288,6 @@ namespace PustokBook.Areas.Admin.Controllers
                 }
             }
 
-
             if (!ModelState.IsValid)
             {
                 ViewBag.Categorys = new SelectList(_db.Categorys.Where(x => x.IsDeleted == false), "Id", "Name");
@@ -294,11 +295,11 @@ namespace PustokBook.Areas.Admin.Controllers
                 return View(updateData);
             }
 
-            Product product = await _db.Products.FindAsync(id);
+            Product product = await _db.Products.Include(x => x.ProductImages).Include(x => x.AuthorBooks).SingleOrDefaultAsync(x => x.Id == id);
 
             ICollection<ProductImage> productImages = await _db.ProductImages.Where(x => x.ProductId == id).ToListAsync();
 
-            if (product == null || productImages.Count == 0 || productImages == null)
+            if (product == null)
                 return NotFound();
 
             product.UpdatedAt = updateData.UpdatedAt;
@@ -311,15 +312,41 @@ namespace PustokBook.Areas.Admin.Controllers
             product.ExTax = updateData.ExTax;
             product.Discount = updateData.Discount;
             product.CategoryId = updateData.CategoryId;
-            product.AuthorBook = updateData.AuthorIds.Select(id => new AuthorProduct
+
+            if (!Enumerable.SequenceEqual(product.AuthorBooks.Select(x => x.AuthorId), updateData.AuthorIds))
             {
-                AuthorId = id
-            }).ToList();
-            product.ActiveImage = updateData.ActiveImage.SaveAsync(PathConstants.ProductImage).Result;
-            product.ProductImages = updateData.ImagesUrl.Select(x => new ProductImage
+                product.AuthorBooks = updateData.AuthorIds.Select(id => new AuthorProduct
+                {
+                    AuthorId = id
+                }).ToList();
+            }
+
+            if (updateData.ActiveImage != null)
             {
-                ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result
-            }).ToList();
+                string filePath = Path.Combine(PathConstants.RootPath, product.ActiveImage);
+                if (SIO.File.Exists(filePath))
+                {
+                    updateData.ActiveImage.UpdateAsync(filePath).Wait();
+                }
+                else
+                {
+                    //Bezi ActiveImagelerim null oldugu ucun bu kodu yazdim
+                    product.ActiveImage = updateData.ActiveImage.SaveAsync(PathConstants.ProductImage).Result;
+                }
+            }
+
+
+            if (updateData.ImagesUrl != null)
+            {
+                var imagesUrl = updateData.ImagesUrl.Select(x => new ProductImage
+                {
+                    ImageUrl = x.SaveAsync(PathConstants.ProductImage).Result,
+                    ProductId = product.Id
+                });
+                await _db.ProductImages.AddRangeAsync(imagesUrl);
+            }
+
+            await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

@@ -8,80 +8,24 @@
     <link href="~/admin/css/sb-admin-2.min.css" rel="stylesheet">
 }
 @section scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="~/admin/js/sb-admin-2.min.js"></script>
     <script>
-        // $("#pagination").click("#prod-pag a", function (ev) {            
-        //     // ev.preventDefault();
-        //     // var url = $(this).attr("href");
-        //     // $.ajax({
-        //     //     url: url,
-        //     //     method: "GET",
-        //     //     success: function (data) {
-        //     //         $("#pagination").html(data);
-        //     //     }
-        //     // });
-        // });
-        // var hrefs = document.querySelectorAll("#prod-pag a");
-
-        // hrefs.forEach(x => {
-        //     x.addEventListener("click", function (ev) {
-        //         ev.preventDefault();
-        //     })
-        // })
-
-        $("#pagination").click(function () {
-            alert();
-        })
-
-        $(".page-link").click(function (ev) {
+        $("#pagination").on("click","#prod-pag a", function (ev) {
             ev.preventDefault();
-        })
-
-        $("tbody").on("click", ".page-link", function (ev) {
-            ev.preventDefault();
-        }))
-
+            var url = $(this).attr("href");
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: function (data) {
+                    $("#pagination").html(data);
+                }
+            });
+        });
     </script>
 }
 <a asp-action="Create" class="btn btn-success m-3">Create</a>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">ProductName</th>
-            <th scope="col">ImageUrls</th>
-            <th colspan="2" class="text-center">Action</th>
-        </tr>
-    </thead>
-    <tbody id="pagination">
-        @if (Model != null)
-        {
-            <nav aria-label="Page navigation example">
-                <ul class="pagination" id="prod-pag">
-                    <li class="page-item @(Model.HasPrev ? " " : "disabled")">
-                        <a class="page-link" asp-action="ProductImagePagination" asp-route-page="(@Model.CurrentPage - 1)" asp-route-count="3">Previous</a>
-                    </li>
-                    @for (int i = 1; i <= Model.LastPage; i++)
-                    {
-                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                            <a class="page-link" asp-action="ProductImagePagination" asp-route-page="@i" asp-route-count="3">@i</a>
-                        </li>
-                    }
-                    <li class="page-item  @(Model.HasNext ? " " : "disabled")">
-                        <a class="page-link" asp-action="ProductImagePagination" asp-route-page="(@Model.CurrentPage + 1)" asp-route-count="3">Next</a>
-                    </li>
-                </ul>
-            </nav>
-        }
-        else
-        {
-            <tr>
-                <td scope="col"></td>
-                <td scope="col"></td>
-                <td scope="col"></td>
-                <td scope="col" colspan="2"></td>
-            </tr>
-        }
+<div id="pagination">
+    <partial name="_ProductImagePaginationPartial" model="Model" />  
+</div>
 
-    </tbody>
-</table>

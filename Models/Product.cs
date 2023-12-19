@@ -35,7 +35,7 @@ namespace PustokBook.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public ICollection<AuthorProduct>? AuthorBook { get; set; }
+        public ICollection<AuthorProduct>? AuthorBooks { get; set; }
         public ICollection<ProductImage>? ProductImages { get; set; }
         public Category? Category { get; set; }
         public bool IsDeleted { get; set; } = false;

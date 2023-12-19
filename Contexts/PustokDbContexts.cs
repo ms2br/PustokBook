@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PustokBook.Models;
 
 namespace PustokBook.Contexts
 {
-    public class PustokDbContexts : DbContext
+    public class PustokDbContexts : IdentityDbContext
     {
         public PustokDbContexts(DbContextOptions db) : base(db) { }
 
@@ -13,5 +14,6 @@ namespace PustokBook.Contexts
         public DbSet<AuthorProduct> AuthorBooks { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
     }
 }
