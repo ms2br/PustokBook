@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.ViewModels.AuthorVM;
 using PustokBook.Contexts;
@@ -8,7 +7,7 @@ using PustokBook.Models;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
+    //[Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class AuthorController : Controller
     {
         PustokDbContexts _db { get; }
@@ -38,7 +37,7 @@ namespace PustokBook.Areas.Admin.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Create(CreateAndUpdateAdminAuthorVM createAuthor)
+        public async Task<IActionResult> Create(AdminCreateAndUpdateAuthorVM createAuthor)
         {
             if (!ModelState.IsValid)
                 return View(createAuthor);
@@ -78,7 +77,7 @@ namespace PustokBook.Areas.Admin.Controllers
             if (author == null)
                 return NotFound();
 
-            CreateAndUpdateAdminAuthorVM data = new CreateAndUpdateAdminAuthorVM
+            AdminCreateAndUpdateAuthorVM data = new AdminCreateAndUpdateAuthorVM
             {
                 FirstName = author.FirstName,
                 LastName = author.LastName
@@ -87,7 +86,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int? id, CreateAndUpdateAdminAuthorVM updateData)
+        public async Task<IActionResult> Update(int? id, AdminCreateAndUpdateAuthorVM updateData)
         {
             if (id < 1 || id == null)
                 return BadRequest();

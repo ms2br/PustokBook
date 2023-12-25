@@ -24,6 +24,7 @@ namespace PustokBook.Areas.Admin.ViewModels.ProductVM
         public ushort Quantity { get; set; }
 
         public IEnumerable<Author>? Authors { get; set; }
+        public IEnumerable<Tag> Tags { get; set; }
         public Category? Category { get; set; }
         public bool IsDeleted { get; set; }
     }

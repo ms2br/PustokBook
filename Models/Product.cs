@@ -37,6 +37,7 @@ namespace PustokBook.Models
 
         public ICollection<AuthorProduct>? AuthorBooks { get; set; }
         public ICollection<ProductImage>? ProductImages { get; set; }
+        public ICollection<ProducTag>? ProductTags { get; set; }
         public Category? Category { get; set; }
         public bool IsDeleted { get; set; } = false;
     }

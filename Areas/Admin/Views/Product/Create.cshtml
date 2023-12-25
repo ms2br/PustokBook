@@ -1,4 +1,4 @@
-﻿@model CreateAdminProductVM;
+﻿@model AdminCreateProductVM;
 @section styles {
     <!-- Custom fonts for this template-->
     <link href="~/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -64,6 +64,12 @@
         <select class="form-control" asp-for="AuthorIds" asp-items='@ViewBag.Authors'>
         </select>
         <span asp-validation-for="AuthorIds" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TagIds" class="form-label"></label>
+        <select class="form-control" asp-for="TagIds" asp-items='@((SelectList)ViewData["Tags"])'>
+        </select>
+        <span asp-validation-for="TagIds" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="Description" class="form-label"></label>

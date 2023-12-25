@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
 using PustokBook.Contexts;
 using PustokBook.Models;
+using PustokBook.Services.Interface;
+using PustokBook.Services.Iplement;
 
 namespace PustokBook
 {
@@ -42,6 +44,8 @@ namespace PustokBook
                 options.SlidingExpiration = true;
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
             });
+
+            builder.Services.AddScoped<IEmail, Email>();
 
             builder.Services.AddSession(); ;
             var app = builder.Build();

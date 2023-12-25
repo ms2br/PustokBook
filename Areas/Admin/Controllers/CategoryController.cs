@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.ViewModels.CategoryVM;
 using PustokBook.Contexts;
@@ -8,7 +7,7 @@ using PustokBook.Models;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
+    //[Authorize(Roles = "SuperAdmin, Admin, Moderator")]
 
     public class CategoryController : Controller
     {
@@ -37,7 +36,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateAndUpdateAdminCategoryVM data)
+        public async Task<IActionResult> Create(AdminCreateAndUpdateCategoryVM data)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +78,7 @@ namespace PustokBook.Areas.Admin.Controllers
             if (category == null)
                 return NotFound();
 
-            CreateAndUpdateAdminCategoryVM categoryVM = new CreateAndUpdateAdminCategoryVM
+            AdminCreateAndUpdateCategoryVM categoryVM = new AdminCreateAndUpdateCategoryVM
             {
                 Name = category.Name,
                 CategoryId = category.CategoryId
@@ -89,7 +88,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int? id, CreateAndUpdateAdminCategoryVM updateData)
+        public async Task<IActionResult> Update(int? id, AdminCreateAndUpdateCategoryVM updateData)
         {
             if (id < 1 || id == null)
                 return BadRequest();

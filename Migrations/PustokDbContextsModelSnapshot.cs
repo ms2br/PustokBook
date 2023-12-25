@@ -249,7 +249,7 @@ namespace PustokBook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("PustokBook.Models.AuthorProduct", b =>
@@ -275,7 +275,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("AuthorBooks");
+                    b.ToTable("AuthorBooks", (string)null);
                 });
 
             modelBuilder.Entity("PustokBook.Models.Category", b =>
@@ -304,7 +304,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("CategoryDataId");
 
-                    b.ToTable("Categorys");
+                    b.ToTable("Categorys", (string)null);
                 });
 
             modelBuilder.Entity("PustokBook.Models.Product", b =>
@@ -365,7 +365,30 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("PustokBook.Models.ProducTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ProducTags", (string)null);
                 });
 
             modelBuilder.Entity("PustokBook.Models.ProductImage", b =>
@@ -387,7 +410,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("PustokBook.Models.Slider", b =>
@@ -420,7 +443,28 @@ namespace PustokBook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sliders");
+                    b.ToTable("Sliders", (string)null);
+                });
+
+            modelBuilder.Entity("PustokBook.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("PustokBook.Models.AppUser", b =>
@@ -527,6 +571,25 @@ namespace PustokBook.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("PustokBook.Models.ProducTag", b =>
+                {
+                    b.HasOne("PustokBook.Models.Product", "Product")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PustokBook.Models.Tag", "Tag")
+                        .WithMany("ProducTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("PustokBook.Models.ProductImage", b =>
                 {
                     b.HasOne("PustokBook.Models.Product", "Product")
@@ -553,6 +616,13 @@ namespace PustokBook.Migrations
                     b.Navigation("AuthorBooks");
 
                     b.Navigation("ProductImages");
+
+                    b.Navigation("ProductTags");
+                });
+
+            modelBuilder.Entity("PustokBook.Models.Tag", b =>
+                {
+                    b.Navigation("ProducTags");
                 });
 #pragma warning restore 612, 618
         }

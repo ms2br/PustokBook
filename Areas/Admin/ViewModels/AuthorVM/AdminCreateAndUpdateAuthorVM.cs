@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PustokBook.Areas.Admin.ViewModels.AuthorVM
 {
-    public class CreateAndUpdateAdminAuthorVM
+    public class AdminCreateAndUpdateAuthorVM
     {
         [MinLength(3), MaxLength(25)]
         public string FirstName { get; set; }

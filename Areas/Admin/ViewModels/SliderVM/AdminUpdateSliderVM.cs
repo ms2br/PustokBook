@@ -2,7 +2,7 @@
 
 namespace PustokBook.Areas.Admin.ViewModels.SliderVM
 {
-    public class UpdateAdminSliderVM
+    public class AdminUpdateSliderVM
     {
         [MinLength(5), MaxLength(60)]
         public string AuthorName { get; init; }

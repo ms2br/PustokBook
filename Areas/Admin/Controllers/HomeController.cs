@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
 using PustokBook.Areas.Admin.ViewModels.SliderVM;
@@ -9,7 +8,7 @@ using PustokBook.Models;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
+    //[Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class HomeController : Controller
     {
         PustokDbContexts _dbContexts { get; }
@@ -35,7 +34,7 @@ namespace PustokBook.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(CreateAdminSliderVM itemVM)
+        public async Task<IActionResult> Create(AdminCreateSliderVM itemVM)
         {
             if (itemVM.ImageFile != null)
             {
@@ -106,7 +105,7 @@ namespace PustokBook.Areas.Admin.Controllers
             if (slider == null)
                 return NotFound();
 
-            UpdateAdminSliderVM itemVM = new UpdateAdminSliderVM
+            AdminUpdateSliderVM itemVM = new AdminUpdateSliderVM
             {
                 AuthorName = slider.AuthorName,
                 BookName = slider.BookName,
@@ -116,7 +115,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int? id, UpdateAdminSliderVM itemData)
+        public async Task<IActionResult> Update(int? id, AdminUpdateSliderVM itemData)
         {
             if (id < 1 || id == null)
                 return BadRequest();

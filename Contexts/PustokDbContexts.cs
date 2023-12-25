@@ -15,5 +15,7 @@ namespace PustokBook.Contexts
         public DbSet<Author> Authors { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ProducTag> ProducTags { get; set; }
     }
 }

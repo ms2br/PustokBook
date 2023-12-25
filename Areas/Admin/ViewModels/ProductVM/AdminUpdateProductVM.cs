@@ -1,9 +1,9 @@
-﻿using PustokBook.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PustokBook.Areas.Admin.ViewModels.ProductVM
 {
-    public class CreateAdminProductVM
+    public class AdminUpdateProductVM
     {
         [MinLength(5), MaxLength(40)]
         public string Title { get; set; }
@@ -23,8 +23,8 @@ namespace PustokBook.Areas.Admin.ViewModels.ProductVM
         [Column(TypeName = "smallmoney")]
         public decimal CostPrice { get; set; }
 
-        public IFormFile ActiveImage { get; set; }
-        public IEnumerable<IFormFile> ImagesUrl { get; set; }
+        public IFormFile? ActiveImage { get; set; }
+        public IEnumerable<IFormFile>? ImagesUrl { get; set; }
 
 
         [Range(0, 100)]
@@ -32,9 +32,12 @@ namespace PustokBook.Areas.Admin.ViewModels.ProductVM
         public ushort Quantity { get; set; }
         public int CategoryId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public Category? Category { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        public IEnumerable<int> AuthorIds { get; set; }
+        public IEnumerable<int>? AuthorIds { get; set; }
+        public IEnumerable<int>? TagIds { get; set; }
+
+        public IEnumerable<AdminProductImageVM>? Images { get; set; }
+        public string CoverImgUrl { get; set; }
     }
 }

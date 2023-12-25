@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PustokBook.Helpers;
 using PustokBook.Models;
+using PustokBook.Services.Interface;
 using PustokBook.ViewModels.AuthVM;
 
 namespace PustokBook.Controllers
@@ -11,19 +12,23 @@ namespace PustokBook.Controllers
         SignInManager<AppUser> _signInManager { get; }
         UserManager<AppUser> _userManager { get; }
         RoleManager<IdentityRole> _roleManager { get; }
-
+        IEmail _email { get; }
         public AuthController(SignInManager<AppUser> signInManager,
             UserManager<AppUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmail email)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            _email = email;
         }
+
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(string? returnUrl, LoginVM vm)
         {
@@ -64,6 +69,7 @@ namespace PustokBook.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM vm)
         {
@@ -92,6 +98,9 @@ namespace PustokBook.Controllers
                 ModelState.AddModelError("", "Something went wrong. Please contact admin");
                 return View(vm);
             }
+
+            _email.SendEmail("ramazabqayev@gmail.com", "Pustok", "Test");
+
             return RedirectToAction(nameof(Login));
         }
         public async Task<IActionResult> Logout()
@@ -99,6 +108,7 @@ namespace PustokBook.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
         public async Task<bool> CreateRoles()
         {
             foreach (var item in Enum.GetValues(typeof(Roles)))

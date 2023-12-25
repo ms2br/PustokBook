@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
@@ -11,7 +10,7 @@ using SIO = System.IO;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
+    //[Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class ProductImageController : Controller
     {
 
@@ -56,7 +55,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateAdminProductImageVM item)
+        public async Task<IActionResult> Create(AdminCreateProductImageVM item)
         {
             List<AdminProductImageListItemVM> listItem =
                await _db.Products.Where(x => !x.IsDeleted).Select(data => new AdminProductImageListItemVM
@@ -131,7 +130,7 @@ namespace PustokBook.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int? id, UpdateAdminProductImageVM data)
+        public async Task<IActionResult> Update(int? id, AdminUpdateProductImageVM data)
         {
             if (id == null || id < 1) return BadRequest();
 

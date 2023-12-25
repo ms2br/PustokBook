@@ -2,7 +2,7 @@
 
 namespace PustokBook.Areas.Admin.ViewModels.SliderVM
 {
-    public record CreateAdminSliderVM
+    public record AdminCreateSliderVM
     {
         public int Id { get; init; }
 

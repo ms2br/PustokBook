@@ -2,7 +2,7 @@
 
 namespace PustokBook.Areas.Admin.ViewModels.CategoryVM
 {
-    public class CreateAndUpdateAdminCategoryVM
+    public class AdminCreateAndUpdateCategoryVM
     {
         [MinLength(4), MaxLength(16)]
         public string Name { get; set; }
