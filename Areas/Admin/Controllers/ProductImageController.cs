@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
@@ -10,7 +11,7 @@ using SIO = System.IO;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = "SuperAdmin, Admin, Moderator")]
+    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class ProductImageController : Controller
     {
 

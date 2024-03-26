@@ -34,7 +34,9 @@ namespace PustokBook.Areas.Admin.ViewComponents
                 SellPrice = x.SellPrice,
                 Title = x.Title
             }).Paginaton(page, count);
+
             int totalCount = await _db.Products.Where(x => !x.IsDeleted).CountAsync();
+
             PaginatonVM<IQueryable<AdminProductListItemVM>> paginaton = new(totalCount, page, (int)Math.Ceiling((decimal)totalCount / count), item);
             return View(paginaton);
         }

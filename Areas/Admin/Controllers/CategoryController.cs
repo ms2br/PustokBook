@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.ViewModels.CategoryVM;
 using PustokBook.Contexts;
@@ -7,8 +9,7 @@ using PustokBook.Models;
 namespace PustokBook.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = "SuperAdmin, Admin, Moderator")]
-
+    [Authorize(Roles = "SuperAdmin, Admin, Moderator")]
     public class CategoryController : Controller
     {
         PustokDbContexts _db { get; }
@@ -32,6 +33,7 @@ namespace PustokBook.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
+            ViewBag.Parents = new SelectList(_db.Categorys, "Id", "Name");
             return View();
         }
 
@@ -40,6 +42,7 @@ namespace PustokBook.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.Parents = new SelectList(_db.Categorys, "Id", "Name");
                 return View(data);
             }
 

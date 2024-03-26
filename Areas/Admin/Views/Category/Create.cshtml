@@ -16,7 +16,7 @@
     </div>
     <div class="mb-3">
         <label asp-for="CategoryId" class="form-label"></label>
-        <input class="form-control" asp-for="CategoryId">
+        <select asp-items="@ViewBag.Parents" asp-for="CategoryId"></select>
         <span asp-validation-for="CategoryId"></span>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>

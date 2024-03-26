@@ -1,4 +1,5 @@
 ﻿@model LoginVM
+
 @{
     Layout = null;
 }
@@ -46,27 +47,31 @@
                                     </div>
                                     <form class="user" method="post">
                                         <div class="form-group">
-                                            <input class="form-control form-control-user"
-                                                   asp-for="UsernameOrEmail"
-                                                   placeholder="Enter username or email address">
-                                            <span class="text-danger" asp-validation-for="UsernameOrEmail"></span>
+                                            <label asp-for="UserNameOrUserEmail"></label>
+                                            <input asp-for="UserNameOrUserEmail" class="form-control form-control-user"
+                                                   placeholder="Enter Email Address...">
                                         </div>
                                         <div class="form-group">
-                                            <input class="form-control form-control-user"
-                                                   placeholder="Password" asp-for="Password">
-                                            <span class="text-danger" asp-validation-for="Password"></span>
+                                            <label asp-for="Password"></label>
+                                            <input asp-for="Password" class="form-control form-control-user"
+                                                   placeholder="Enter Password...">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input class="custom-control-input" asp-for="IsRemember">
-                                                <label class="custom-control-label" asp-for="IsRemember">
-                                                    Remember
-                                                    Me
+                                                <input asp-for="Remember" class="custom-control-input">
+                                                <label asp-for="Remember" class="custom-control-label">
+                                                    Remember Me
                                                 </label>
                                             </div>
                                         </div>
-                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                        <button class="btn btn-primary btn-user btn-block">
+
+                                        @if (!string.IsNullOrEmpty(ViewBag.Link))
+                                        {
+                                            <span class="text-danger">@Html.Raw(ViewBag.Link)</span>
+                                        }
+                                        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+
+                                        <button href="index.html" class="btn btn-primary btn-user btn-block">
                                             Login
                                         </button>
                                         <hr>
@@ -105,7 +110,6 @@
 
     <!-- Custom scripts for all pages-->
     <script src="~/admin/js/sb-admin-2.min.js"></script>
-
 </body>
 
 </html>

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PustokBook.Areas.Admin.Helpers;
 using PustokBook.Contexts;
 using PustokBook.Models;
-using PustokBook.Services.Interface;
+using PustokBook.Services.Interfaces;
 using PustokBook.Services.Iplement;
 
 namespace PustokBook
@@ -18,21 +18,25 @@ namespace PustokBook
             builder.Services.AddDbContext<PustokDbContexts>(x =>
             {
                 x.UseSqlServer(builder.Configuration.GetConnectionString("MSSql"));
-            }).AddIdentity<AppUser, IdentityRole>(opt =>
-            {
-                opt.SignIn.RequireConfirmedEmail = false;
-                opt.User.RequireUniqueEmail = true;
-                opt.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789._";
-                opt.Lockout.MaxFailedAccessAttempts = 5;
-                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.Password.RequiredLength = 4;
-            }).AddDefaultTokenProviders().AddEntityFrameworkStores<PustokDbContexts>();
+            })
+            .AddIdentity<User, IdentityRole>(opt =>
+                {
+                    opt.SignIn.RequireConfirmedEmail = true;
+                    opt.User.RequireUniqueEmail = true;
+                    opt.Lockout.MaxFailedAccessAttempts = 5;
+                    opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    opt.Password.RequiredUniqueChars = 2;
+                    opt.Password.RequireNonAlphanumeric = false;
+                    opt.Password.RequiredLength = 4;
+                    opt.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+                })
+             .AddDefaultTokenProviders()
+             .AddEntityFrameworkStores<PustokDbContexts>();
+
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = new PathString("/Auth/Login");
                 options.LogoutPath = new PathString("/Auth/Logout");
-                options.AccessDeniedPath = new PathString("/Home/AccessDenied");
 
                 options.Cookie = new()
                 {
@@ -45,13 +49,20 @@ namespace PustokBook
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
             });
 
-            builder.Services.AddScoped<IEmail, Email>();
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+               opt.TokenLifespan = TimeSpan.FromHours(2));
 
-            builder.Services.AddSession(); ;
+            //builder.Services.AddSession();
+            //builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            //builder.Services.AddScoped<IConfiguration, ConfigurationManager>();
+
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())
             {
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
             app.UseHttpsRedirection();

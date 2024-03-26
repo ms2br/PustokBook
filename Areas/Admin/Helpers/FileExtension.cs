@@ -3,7 +3,7 @@
     public static class FileExtension
     {
         public static bool IsValidSize(this IFormFile file, float kb = 20) =>
-            file.Length >= kb * 1024;
+            file.Length >= kb * 1024000;
 
         public static bool IsCorrectType(this IFormFile file, string contentType = "image") => file.ContentType.Contains(contentType);
 
@@ -24,10 +24,6 @@
 
         public static async Task UpdateAsync(this IFormFile file, string lastImageUrl)
         {
-            //if (!File.Exists(lastImageUrl))
-            //{
-            //    throw new FileNotFoundException();
-            //}
             File.Delete(lastImageUrl);
             using (FileStream fs = File.Create(lastImageUrl))
             {

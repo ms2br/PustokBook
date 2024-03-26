@@ -4,15 +4,16 @@ namespace PustokBook.ViewModels.AuthVM
 {
     public class RegisterVM
     {
-        [Required(ErrorMessage = "Ad və soy adınızı daxil edin!!!"), MaxLength(36)]
-        public string Fullname { get; set; }
-        [Required, DataType(DataType.EmailAddress)]
+        [MaxLength(15), MinLength(3)]
+        public string UserName { get; set; }
+        [MaxLength(254), DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        [Required(ErrorMessage = "İstifadəçi adınızı daxil edin!!!"), MaxLength(24)]
-        public string Username { get; set; }
-        [Required, DataType(DataType.Password), Compare(nameof(ConfirmPassword)), RegularExpression("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{4,}$", ErrorMessage = "Wrong input for password")]
+        [MinLength(4), MaxLength(254), DataType(DataType.Password), Compare(nameof(ConfirmedPassword))]
         public string Password { get; set; }
-        [Required, DataType(DataType.Password), RegularExpression("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{4,}$", ErrorMessage = "Wrong input for password")]
-        public string ConfirmPassword { get; set; }
+
+        [MinLength(4), MaxLength(254), DataType(DataType.Password)]
+        public string ConfirmedPassword { get; set; }
+
+        public IFormFile ProfilActiveImageUrl { get; set; }
     }
 }

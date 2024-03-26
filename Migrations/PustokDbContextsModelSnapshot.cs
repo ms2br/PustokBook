@@ -47,6 +47,36 @@ namespace PustokBook.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "f29df050-89e5-4a4e-bf1e-645642db05e2",
+                            ConcurrencyStamp = "71e36bf3-777a-4d15-b585-d1af08be730a",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        },
+                        new
+                        {
+                            Id = "e4cd4bfe-1c44-4760-86a0-6ce037bb16e6",
+                            ConcurrencyStamp = "0e826a9c-2d0e-4a35-a9d6-9ffb87b2b81a",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "4b4459a2-3f35-43c5-b4cb-55cc1786dec8",
+                            ConcurrencyStamp = "2cb581da-c617-4fb8-803e-046763888c99",
+                            Name = "Moderator",
+                            NormalizedName = "MODERATOR"
+                        },
+                        new
+                        {
+                            Id = "606bb41b-dddd-403f-859c-04f9974146bb",
+                            ConcurrencyStamp = "0c54d82b-f591-4c4b-b547-bffd757d02eb",
+                            Name = "Member",
+                            NormalizedName = "MEMBER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -249,7 +279,7 @@ namespace PustokBook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors", (string)null);
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("PustokBook.Models.AuthorProduct", b =>
@@ -275,7 +305,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("AuthorBooks", (string)null);
+                    b.ToTable("AuthorBooks");
                 });
 
             modelBuilder.Entity("PustokBook.Models.Category", b =>
@@ -304,7 +334,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("CategoryDataId");
 
-                    b.ToTable("Categorys", (string)null);
+                    b.ToTable("Categorys");
                 });
 
             modelBuilder.Entity("PustokBook.Models.Product", b =>
@@ -365,7 +395,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("PustokBook.Models.ProducTag", b =>
@@ -388,7 +418,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("ProducTags", (string)null);
+                    b.ToTable("ProducTags");
                 });
 
             modelBuilder.Entity("PustokBook.Models.ProductImage", b =>
@@ -410,7 +440,7 @@ namespace PustokBook.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("PustokBook.Models.Slider", b =>
@@ -443,7 +473,7 @@ namespace PustokBook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sliders", (string)null);
+                    b.ToTable("Sliders");
                 });
 
             modelBuilder.Entity("PustokBook.Models.Tag", b =>
@@ -464,21 +494,18 @@ namespace PustokBook.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags", (string)null);
+                    b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("PustokBook.Models.AppUser", b =>
+            modelBuilder.Entity("PustokBook.Models.User", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<string>("Fullname")
+                    b.Property<string>("ProfilActiveImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProfileImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("AppUser");
+                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
